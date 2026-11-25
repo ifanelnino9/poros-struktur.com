@@ -24,14 +24,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Arsitektur halaman
 - Tidak ada build, lint, atau test. Memeriksa perubahan berarti membuka halaman (`npx wrangler dev`) dan melihatnya.
-- Setiap halaman berdiri sendiri: CSS di satu blok `<style>`, tidak ada file CSS atau JS terpisah. `alur-kerja.html` tidak memakai JS. `index.html` punya satu blok `<script>` kecil di dekat akhir file, dan satu blok JSON-LD `ProfessionalService` (schema.org) di `<head>`.
+- Setiap halaman berdiri sendiri: CSS di satu blok `<style>`, tidak ada file CSS atau JS terpisah. Kedua halaman punya dua blok `<script>` di awal `<head>`: tag Google (GTM-5CWZ8GB8) dan pelacak konversi Google Ads (lihat bagian Google Ads). `alur-kerja.html` tidak memakai JS lain. `index.html` punya satu blok `<script>` kecil di dekat akhir file, dan satu blok JSON-LD `ProfessionalService` (schema.org) di `<head>`.
 - `index.html` adalah satu halaman panjang dengan bagian ber-`id`, berurutan: `paket`, `hasil-kerja`, `cocok`, `diterima`, `layanan`, `tentang`, `metode`, `contoh`, `alur`, `faq`. Menu dan tombol di atas mengacu ke id ini, jadi mengubah id berarti memeriksa semua tautan `#...`.
 - Kontak hanya lewat WhatsApp. Nomor `6282143021058` tertulis langsung di banyak tautan `wa.me` (dengan teks pesan berbeda per tombol) di `index.html` dan `alur-kerja.html`. Mengganti nomor harus mengubah semua tautan itu, tidak ada satu tempat konfigurasi.
 - Dua halaman saling terhubung lewat `alur-kerja.html` ↔ `index.html` (tautan relatif).
 - Font Archivo dan Poppins dimuat dari Google Fonts. Ikon situs berupa SVG inline (data URI).
 
 ## Deploy dan Git
-- Remote: `https://github.com/ifanelnino9/poros-struktur-R.1.git`, branch `main`.
+- Remote: `https://github.com/ifanelnino9/poros-struktur.com.git`, branch `main`. (Nama repositori lama `poros-struktur-R.1` sudah diganti; alamat lama masih dialihkan GitHub, tapi sebaiknya `git remote set-url origin` ke alamat baru.)
+- Kalau ada perubahan yang di-commit lewat editor web GitHub, jalankan `git pull` dulu di folder lokal sebelum mengedit atau push lagi.
 - Setiap `git push` ke `main` memicu deploy ulang otomatis (`npx wrangler deploy`).
 - Situs live: https://poros-struktur.com (juga https://www.poros-struktur.com).
 - Alamat cadangan: https://poros-struktur.ifanelnino.workers.dev
@@ -55,9 +56,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Jangan ubah isi HTML, CSS, atau JS kecuali diminta.
 - Akhiri tugas dengan ringkasan: penyebab, file yang diubah, hasil verifikasi, langkah berikutnya.
 
+## Google Ads
+- Akun Google Ads: `AW-18573158448`. Kampanye Search "Search - Jasa Hitung Struktur - Jatim Jabodetabek", 17 Nov sampai 30 Nov 2026.
+- Konversi utama: "Klik WhatsApp" (label `Nj-ICL2e5LodELDQr5hF`), kategori Meminta penawaran harga.
+- Pelacak: satu skrip di `<head>` kedua halaman, memakai satu pendengar klik untuk semua tautan `wa.me` dan mengirim `gtag('event','conversion',...)`. Tombol WhatsApp baru otomatis ikut terlacak, tidak perlu menambah atribut apa pun.
+- Konversi lama "Kontak" sudah dihapus karena tidak pernah menerima data.
+- Sitelink kampanye: Paket Harga (`/#paket`), Hasil Kerja (`/#hasil-kerja`), FAQ (`/#faq`), Alur Kerja (`/alur-kerja`). Kalau id bagian atau alamat halaman berubah, sitelink ikut diperbarui.
+
 ## Status
 - Selesai: deploy berhasil, `/` dan `/alur-kerja` mengembalikan 200, file internal mengembalikan 404.
 - Belum dicek: tampilan visual di browser dan HP, tombol WhatsApp, link antar-halaman.
+- Selesai: tag Google dan pelacak klik WhatsApp online (dicek 18 Nov 2026). Belum dicek: pencatatan konversi "Klik WhatsApp" di Google Ads (butuh sampai 48 jam) dan pembayaran iklan.
 - Selesai: domain `poros-struktur.com` dan `www.poros-struktur.com` terpasang, `/` dan `/alur-kerja` mengembalikan 200 di kedua alamat.
 
 ## Cara menjalankan lokal
